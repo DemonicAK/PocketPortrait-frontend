@@ -46,7 +46,7 @@ export default function Auth(): React.JSX.Element {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-6 text-center">
+        <h2 className="text-2xl font-bold mb-6 text-center text-green-700">
           {isLogin ? 'Login' : 'Sign Up'}
         </h2>
 
@@ -60,7 +60,7 @@ export default function Auth(): React.JSX.Element {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 text-gray-700"
                 required
                 disabled={loading}
               />
@@ -75,7 +75,7 @@ export default function Auth(): React.JSX.Element {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 text-gray-700"
               required
               disabled={loading}
             />
@@ -89,7 +89,7 @@ export default function Auth(): React.JSX.Element {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 text-gray-700"
               required
               disabled={loading}
             />
