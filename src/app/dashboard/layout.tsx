@@ -76,6 +76,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps): JSX
               >
                 Dashboard
               </Link>
+              {/* <Link 
+                href="/dashboard/analysis" 
+                className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
+              >
+                analysis
+              </Link> */}
               <div className="relative group">
                 <button className="text-gray-600 hover:text-blue-600 font-medium transition-colors">
                   Account

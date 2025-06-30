@@ -2,18 +2,11 @@
 import { useState, useEffect } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Title } from 'chart.js';
 import { Pie, Line } from 'react-chartjs-2';
-import { DashboardStats } from '@/types';
+import { DashboardStats, Budget, AnalysisData, Suggestion } from '@/types';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Title);
 
-interface Budget {
-  _id?: string;
-  category: string;
-  limitAmount: number;
-  currentSpent: number;
-  month: string;
-  year: number;
-}
+
 
 export default function Dashboard(): JSX.Element {
   const [stats, setStats] = useState<DashboardStats>({
@@ -25,10 +18,13 @@ export default function Dashboard(): JSX.Element {
   });
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  // const [AnalysisData, setAnalysisData] = useState<AnalysisData | null>(null);
+  // const [Suggestions, setSuggestions] = useState<Suggestion[]>([]);
 
   useEffect(() => {
     fetchDashboardData();
     fetchBudgets();
+    // getExpenseAnalysis(); 
   }, []);
 
   const fetchDashboardData = async (): Promise<void> => {
@@ -48,6 +44,59 @@ export default function Dashboard(): JSX.Element {
       setLoading(false);
     }
   };
+//   const getExpenseAnalysis = async () => {
+//     try {
+//       const token = localStorage.getItem('token');
+//       const response = await fetch(
+//         `${process.env.NEXT_PUBLIC_PYTHON_URL || 'http://localhost:8000'}/api/v1/analysis/comprehensive`,
+//         {
+//           headers: { 
+//             'Authorization': `Bearer ${token}`,
+//             'Content-Type': 'application/json'
+//           }
+//         }
+//       );
+  
+//       if (response.ok) {
+//         const analysisData = await response.json();
+        
+//         if (analysisData.success) {
+//           setAnalysisData(analysisData.data);
+//           setSuggestions(analysisData.data.suggestions || []);
+//         } else {
+//           console.error('Analysis failed:', analysisData.message);
+//           // Set empty state
+//           // Or provide a default value:
+// const trendsi = AnalysisData?.trends || {
+//   weekly_spending: {},
+//   daily_average: 0,
+//   trend: 'insufficient_data' as const,
+//   recent_weekly_avg: 0,
+//   earlier_weekly_avg: 0,
+//   highest_spending_day: { date: '', amount: 0 },
+//   lowest_spending_day: { date: '', amount: 0 }
+// };
+//           setAnalysisData({
+//             total_expenses: 0,
+//             expense_count: 0,
+//             category_analysis: {},
+//             trends: trendsi,
+//             suggestions: [],
+//             period: '30 days',
+//             analysis_date: new Date().toISOString()
+//           });
+//           setSuggestions([]);
+//         }
+//       } else {
+//         throw new Error(`HTTP error! status: ${response.status}`);
+//       }
+//     } catch (error) {
+//       console.error('Error fetching expense analysis:', error);
+//       // Set error state or show notification
+//       setAnalysisData(null);
+//       setSuggestions([]);
+//     }
+//   };
 
   const fetchBudgets = async (): Promise<void> => {
     try {
@@ -298,6 +347,48 @@ export default function Dashboard(): JSX.Element {
           </div>
         </div>
       </div>
+      {/* Analysis Section
+{AnalysisData && (
+  <div className="mt-10">
+    <h2 className="text-2xl font-bold text-gray-800 mb-4">Spending Analysis</h2>
+    
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h3 className="text-lg font-semibold text-gray-700 mb-2">Summary</h3>
+        <p><strong>Total Expenses:</strong> {AnalysisData.expense_count}</p>
+        <p><strong>Total Amount Spent:</strong> {formatCurrency(AnalysisData.total_expenses)}</p>
+        <p><strong>Analysis Period:</strong> {AnalysisData.period}</p>
+        <p><strong>Analysis Date:</strong> {new Date(AnalysisData.analysis_date).toLocaleDateString()}</p>
+      </div>
+
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h3 className="text-lg font-semibold text-gray-700 mb-2">Spending Trend</h3>
+        {AnalysisData.trends && (
+          <>
+            <p><strong>Trend:</strong> {AnalysisData.trends.trend}</p>
+            <p><strong>Daily Average:</strong> {formatCurrency(AnalysisData.trends.daily_average)}</p>
+            <p><strong>Recent Weekly Avg:</strong> {formatCurrency(AnalysisData.trends.recent_weekly_avg)}</p>
+            <p><strong>Earlier Weekly Avg:</strong> {formatCurrency(AnalysisData.trends.earlier_weekly_avg)}</p>
+            <p><strong>Highest Spending Day:</strong> {AnalysisData.trends.highest_spending_day.date} ({formatCurrency(AnalysisData.trends.highest_spending_day.amount)})</p>
+            <p><strong>Lowest Spending Day:</strong> {AnalysisData.trends.lowest_spending_day.date} ({formatCurrency(AnalysisData.trends.lowest_spending_day.amount)})</p>
+          </>
+        )}
+      </div>
+    </div>
+
+    {Suggestions.length > 0 && (
+      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h3 className="text-lg font-semibold text-gray-700 mb-4">Suggestions</h3>
+        <ul className="list-disc list-inside space-y-2 text-gray-600">
+          {Suggestions.map((suggestion, idx) => (
+            <li key={idx}>{suggestion.message}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+)} */}
+
     </div>
   );
 }
