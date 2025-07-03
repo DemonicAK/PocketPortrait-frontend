@@ -72,7 +72,7 @@ export default function EntryPage(): JSX.Element {
                 type="number"
                 value={expense.amount || ''}
                 onChange={(e) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 text-gray-700"
                 required
                 min="0"
                 step="0.01"
@@ -87,7 +87,7 @@ export default function EntryPage(): JSX.Element {
               <select
                 value={expense.category}
                 onChange={(e) => handleInputChange('category', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 text-gray-700"
                 required
                 disabled={loading}
               >
@@ -106,7 +106,7 @@ export default function EntryPage(): JSX.Element {
                 type="date"
                 value={expense.date}
                 onChange={(e) => handleInputChange('date', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 text-gray-700"
                 required
                 disabled={loading}
               />
@@ -119,7 +119,7 @@ export default function EntryPage(): JSX.Element {
               <select
                 value={expense.paymentMethod}
                 onChange={(e) => handleInputChange('paymentMethod', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 text-gray-700"
                 required
                 disabled={loading}
               >
@@ -138,7 +138,7 @@ export default function EntryPage(): JSX.Element {
             <textarea
               value={expense.notes || ''}
               onChange={(e) => handleInputChange('notes', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 text-gray-700"
               rows={3}
               disabled={loading}
             />
