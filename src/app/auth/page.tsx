@@ -24,14 +24,18 @@ export default function Auth() {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+         credentials: 'include', // Important: includes cookies in request
       });
 
       const data: AuthResponse = await response.json();
-
-      if (response.ok && data.token) {
-        localStorage.setItem('token', data.token);
+      // console.log('Response data:', data);
+      if (response.ok) {
+        // localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
+        // console.log('User data:', data.user);
+        // console.log("reached here");
+        // Redirect to dashboard or home page
         router.push('/dashboard');
       } else {
         alert(data.message || 'Authentication failed');

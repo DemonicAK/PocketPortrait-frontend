@@ -1,393 +1,509 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Title } from 'chart.js';
-import { Pie, Line } from 'react-chartjs-2';
-import { DashboardStats, Budget, AnalysisData, Suggestion } from '@/types';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Title, BarElement } from 'chart.js';
+import { Pie, Line, Bar } from 'react-chartjs-2';
+import { DashboardStats, Budget } from '@/types';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Separator } from "@/components/ui/separator";
+import {
+    TrendingUp,
+    TrendingDown,
+    Wallet,
+    PiggyBank,
+    CreditCard,
+    Target,
+    AlertTriangle,
+    CheckCircle,
+    DollarSign,
+    BarChart3,
+    PieChart,
+    Activity
+} from 'lucide-react';
 
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Title);
-
-
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Title, BarElement);
 
 export default function Dashboard() {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalSpent: 0,
-    topCategory: '',
-    topPaymentMethods: [],
-    categoryData: {},
-    monthlyData: []
-  });
-  const [budgets, setBudgets] = useState<Budget[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  // const [AnalysisData, setAnalysisData] = useState<AnalysisData | null>(null);
-  // const [Suggestions, setSuggestions] = useState<Suggestion[]>([]);
+    const [stats, setStats] = useState<DashboardStats>({
+        // Core financial metrics
+        totalSpent: 0,
+        totalIncome: 0,
+        netAmount: 0,
+        // Category analysis
+        topCategory: '',
+        topIncomeCategory: '',
+        categoryData: {},
+        incomeCategoryData: {},
+        // Payment methods
+        topPaymentMethods: [],
+        paymentMethodData: {},
+        // Historical data
+        monthlyData: []
+    });
 
-  useEffect(() => {
-    fetchDashboardData();
-    fetchBudgets();
-    // getExpenseAnalysis(); 
-  }, []);
+    const [budgets, setBudgets] = useState<Budget[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
-  const fetchDashboardData = async (): Promise<void> => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/expenses/dashboard`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+    useEffect(() => {
+        fetchDashboardData();
+        fetchBudgets();
+    }, []);
 
-      if (response.ok) {
-        const data: DashboardStats = await response.json();
-        setStats(data);
-      }
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  //   const getExpenseAnalysis = async () => {
-  //     try {
-  //       const token = localStorage.getItem('token');
-  //       const response = await fetch(
-  //         `${process.env.NEXT_PUBLIC_PYTHON_URL || 'http://localhost:8000'}/api/v1/analysis/comprehensive`,
-  //         {
-  //           headers: { 
-  //             'Authorization': `Bearer ${token}`,
-  //             'Content-Type': 'application/json'
-  //           }
-  //         }
-  //       );
+    const fetchDashboardData = async (): Promise<void> => {
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/transactions/dashboard`, {
+                // headers: { 'Authorization': `Bearer ${token}` }
+                credentials: 'include', // Important: includes cookies in request
 
-  //       if (response.ok) {
-  //         const analysisData = await response.json();
+            });
 
-  //         if (analysisData.success) {
-  //           setAnalysisData(analysisData.data);
-  //           setSuggestions(analysisData.data.suggestions || []);
-  //         } else {
-  //           console.error('Analysis failed:', analysisData.message);
-  //           // Set empty state
-  //           // Or provide a default value:
-  // const trendsi = AnalysisData?.trends || {
-  //   weekly_spending: {},
-  //   daily_average: 0,
-  //   trend: 'insufficient_data' as const,
-  //   recent_weekly_avg: 0,
-  //   earlier_weekly_avg: 0,
-  //   highest_spending_day: { date: '', amount: 0 },
-  //   lowest_spending_day: { date: '', amount: 0 }
-  // };
-  //           setAnalysisData({
-  //             total_expenses: 0,
-  //             expense_count: 0,
-  //             category_analysis: {},
-  //             trends: trendsi,
-  //             suggestions: [],
-  //             period: '30 days',
-  //             analysis_date: new Date().toISOString()
-  //           });
-  //           setSuggestions([]);
-  //         }
-  //       } else {
-  //         throw new Error(`HTTP error! status: ${response.status}`);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching expense analysis:', error);
-  //       // Set error state or show notification
-  //       setAnalysisData(null);
-  //       setSuggestions([]);
-  //     }
-  //   };
-
-  const fetchBudgets = async (): Promise<void> => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/budgets`,
-        {
-          headers: { 'Authorization': `Bearer ${token}` }
+            if (response.ok) {
+                const data: DashboardStats = await response.json();
+                setStats(data);
+            }
+        } catch (error) {
+            console.error('Error fetching dashboard data:', error);
+        } finally {
+            setLoading(false);
         }
-      );
+    };
 
-      if (response.ok) {
-        const data = await response.json();
-        setBudgets(data);
-      }
-    } catch (error) {
-      console.error('Error fetching budgets:', error);
-    }
-  };
+    const fetchBudgets = async (): Promise<void> => {
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/budgets`,
+                {
+                    // headers: { 'Authorization': `Bearer ${token}` }
+                    credentials: 'include', // Important: includes cookies in request
+                }
+            );
 
-  const formatCurrency = (amount: number): string => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR'
-    }).format(amount);
-  };
+            if (response.ok) {
+                const data = await response.json();
+                
+                setBudgets(data);
+                // console.log('Fetched budgets:', data);
+            }
+        } catch (error) {
+            console.error('Error fetching budgets:', error);
+        }
+    };
 
-  const getBudgetStatus = (budget: Budget): { color: string; text: string; percentage: number } => {
-    const percentage = (budget.currentSpent / budget.limitAmount) * 100;
+    const formatCurrency = (amount: number): string => {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR'
+        }).format(amount);
+    };
 
-    if (percentage >= 100) {
-      return { color: 'text-red-600 bg-red-100', text: 'Over Budget', percentage };
-    } else if (percentage >= 80) {
-      return { color: 'text-orange-600 bg-orange-100', text: 'Near Limit', percentage };
-    } else {
-      return { color: 'text-green-600 bg-green-100', text: 'On Track', percentage };
-    }
-  };
+    const getBudgetStatus = (budget: Budget): { color: string; text: string; percentage: number; variant: "default" | "secondary" | "destructive" | "outline" } => {
+        const percentage = (budget.currentSpent / budget.limitAmount) * 100;
 
-  // Get budgets that need alerts (>80% spent)
-  const alertBudgets = budgets.filter(budget => {
-    const percentage = (budget.currentSpent / budget.limitAmount) * 100;
-    return percentage >= 80;
-  });
+        if (percentage >= 100) {
+            return { color: 'text-red-600', text: 'Over Budget', percentage, variant: 'destructive' };
+        } else if (percentage >= 80) {
+            return { color: 'text-orange-600', text: 'Near Limit', percentage, variant: 'outline' };
+        } else {
+            return { color: 'text-green-600', text: 'On Track', percentage, variant: 'default' };
+        }
+    };
 
-  // Check if all budgets are on track
-  const allBudgetsOnTrack = budgets.length > 0 && alertBudgets.length === 0;
+    // Get budgets that need alerts (>80% spent)
+    const alertBudgets = budgets.filter(budget => {
+        const percentage = (budget.currentSpent / budget.limitAmount) * 100;
+        return percentage >= 80;
+    });
 
-  const pieData = {
-    labels: Object.keys(stats.categoryData),
-    datasets: [{
-      data: Object.values(stats.categoryData),
-      backgroundColor: [
-        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
-        '#9966FF', '#FF9F40', '#FF6384'
-      ],
-      borderWidth: 1
-    }]
-  };
+    const allBudgetsOnTrack = budgets.length > 0 && alertBudgets.length === 0;
 
-  const lineData = {
-    labels: stats.monthlyData.map(item => item.month),
-    datasets: [{
-      label: 'Monthly Spending',
-      data: stats.monthlyData.map(item => item.amount),
-      borderColor: '#36A2EB',
-      backgroundColor: 'rgba(54, 162, 235, 0.1)',
-      tension: 0.1
-    }]
-  };
+    // Chart configurations
+    const expensePieData = {
+        labels: Object.keys(stats.categoryData),
+        datasets: [{
+            data: Object.values(stats.categoryData),
+            backgroundColor: [
+                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                '#9966FF', '#FF9F40', '#FF6B6B', '#4ECDC4'
+            ],
+            borderWidth: 2,
+            borderColor: '#fff'
+        }]
+    };
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'bottom' as const
-      }
-    }
-  };
+    const incomePieData = {
+        labels: Object.keys(stats.incomeCategoryData || {}),
+        datasets: [{
+            data: Object.values(stats.incomeCategoryData || {}),
+            backgroundColor: [
+                '#10B981', '#059669', '#047857', '#065F46',
+                '#064E3B', '#022C22', '#14B8A6', '#0D9488'
+            ],
+            borderWidth: 2,
+            borderColor: '#fff'
+        }]
+    };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-64">
-        <div className="text-lg">Loading dashboard...</div>
-      </div>
-    );
-  }
+    const monthlyTrendData = {
+        labels: stats.monthlyData.map(item => item.month),
+        datasets: [
+            {
+                label: 'Expenses',
+                data: stats.monthlyData.map(item => item.amount),
+                borderColor: '#EF4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                fill: true,
+                tension: 0.4
+            },
+            ...(stats.monthlyData.some(item => item.income) ? [{
+                label: 'Income',
+                data: stats.monthlyData.map(item => item.income || 0),
+                borderColor: '#10B981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                fill: true,
+                tension: 0.4
+            }] : []),
+            ...(stats.monthlyData.some(item => item.net) ? [{
+                label: 'Net Amount',
+                data: stats.monthlyData.map(item => item.net || 0),
+                borderColor: '#3B82F6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                fill: true,
+                tension: 0.4
+            }] : [])
+        ]
+    };
 
-  return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">Dashboard</h1>
+    const paymentMethodData = {
+        labels: Object.keys(stats.paymentMethodData),
+        datasets: [{
+            label: 'Amount',
+            data: Object.values(stats.paymentMethodData),
+            backgroundColor: [
+                '#8B5CF6', '#A78BFA', '#C4B5FD', '#DDD6FE',
+                '#EDE9FE', '#F3F4F6'
+            ],
+            borderColor: '#6366F1',
+            borderWidth: 1
+        }]
+    };
 
-      {/* Budget Alerts */}
-      {alertBudgets.length > 0 ? (
-        <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Budget Alert!</h3>
-              <div className="mt-2 text-sm text-red-700">
-                <p>You are approaching or exceeding your budget limits:</p>
-                <ul className="list-disc list-inside mt-2 space-y-1">
-                  {alertBudgets.map((budget) => {
-                    const status = getBudgetStatus(budget);
-                    const remaining = budget.limitAmount - budget.currentSpent;
-                    return (
-                      <li key={budget._id}>
-                        <strong>{budget.category}</strong>: {status.percentage.toFixed(1)}% used
-                        {remaining > 0 ? (
-                          <span className="text-green-600"> ({formatCurrency(remaining)} remaining)</span>
-                        ) : (
-                          <span className="text-red-600"> (Over by {formatCurrency(Math.abs(remaining))})</span>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : allBudgetsOnTrack ? (
-        <div className="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-green-800">All Budgets On Track!</h3>
-              <p className="mt-1 text-sm text-green-700">
-                Great job! All your budgets are within healthy spending limits.
-              </p>
-            </div>
-          </div>
-        </div>
-      ) : null}
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom' as const,
+                labels: {
+                    padding: 20,
+                    usePointStyle: true
+                }
+            }
+        }
+    };
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-700">Total Spent This Month</h3>
-          <p className="text-3xl font-bold text-blue-600">₹{stats.totalSpent.toLocaleString()}</p>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-700">Top Category</h3>
-          <p className="text-2xl font-bold text-green-600">{stats.topCategory || 'No data'}</p>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-700">Top Payment Methods</h3>
-          <div className="space-y-1">
-            {stats.topPaymentMethods.slice(0, 3).map((method, index) => (
-              <p key={index} className="text-sm text-gray-600">{index + 1}. {method}</p>
-            ))}
-            {stats.topPaymentMethods.length === 0 && (
-              <p className="text-sm text-gray-400">No data available</p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Budget Overview - Replicated from Account Page */}
-      {budgets.length > 0 && (
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h3 className="text-xl font-semibold mb-4">Budget Overview - {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</h3>
-          <div className="grid gap-4">
-            {budgets.map((budget) => {
-              const status = getBudgetStatus(budget);
-              const percentage = (budget.currentSpent / budget.limitAmount) * 100;
-
-              return (
-                <div key={budget._id} className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h4 className="font-semibold text-lg">{budget.category}</h4>
-                      <p className="text-gray-600 text-sm">
-                        {new Date(budget.month + '-01').toLocaleDateString('en-US', {
-                          month: 'long',
-                          year: 'numeric'
-                        })}
-                      </p>
-                    </div>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>
-                      {status.text}
-                    </span>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Spent: {formatCurrency(budget.currentSpent)}</span>
-                      <span>Limit: {formatCurrency(budget.limitAmount)}</span>
-                    </div>
-
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className={`h-2 rounded-full transition-all ${percentage >= 100 ? 'bg-red-500' :
-                            percentage >= 80 ? 'bg-orange-500' : 'bg-green-500'
-                          }`}
-                        style={{ width: `${Math.min(percentage, 100)}%` }}
-                      ></div>
-                    </div>
-
-                    <div className="text-right text-sm text-gray-600">
-                      {percentage.toFixed(1)}% used
-                    </div>
-                  </div>
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-64">
+                <div className="flex flex-col items-center space-y-4">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                    <div className="text-lg font-medium">Loading dashboard...</div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+            </div>
+        );
+    }
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-xl font-semibold mb-4">Category-wise Spending</h3>
-          <div className="h-64">
-            {Object.keys(stats.categoryData).length > 0 ? (
-              <Pie data={pieData} options={chartOptions} />
-            ) : (
-              <div className="flex items-center justify-center h-full text-gray-500">
-                No expense data available
-              </div>
+    return (
+        <div className="space-y-8">
+            <div className="flex items-center justify-between">
+                <h1 className="text-4xl font-bold text-gray-900">Dashboard</h1>
+                <Badge variant="outline" className="text-sm">
+                    {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                </Badge>
+            </div>
+
+            {/* Budget Alerts */}
+            {alertBudgets.length > 0 ? (
+                <Alert className="border-red-200 bg-red-50">
+                    <AlertTriangle className="h-4 w-4 text-red-600" />
+                    <AlertTitle className="text-red-800">Budget Alert!</AlertTitle>
+                    <AlertDescription className="text-red-700">
+                        <p className="mb-2">You are approaching or exceeding your budget limits:</p>
+                        <ul className="space-y-1">
+                            {alertBudgets.map((budget) => {
+                                const status = getBudgetStatus(budget);
+                                const remaining = budget.limitAmount - budget.currentSpent;
+                                return (
+                                    <li key={budget._id} className="flex items-center justify-between">
+                                        <span>
+                                            <strong>{budget.category}</strong>: {status.percentage.toFixed(1)}% used
+                                        </span>
+                                        {remaining > 0 ? (
+                                            <Badge variant="outline" className="text-green-600 border-green-600">
+                                                {formatCurrency(remaining)} remaining
+                                            </Badge>
+                                        ) : (
+                                            <Badge variant="destructive">
+                                                Over by {formatCurrency(Math.abs(remaining))}
+                                            </Badge>
+                                        )}
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </AlertDescription>
+                </Alert>
+            ) : allBudgetsOnTrack ? (
+                <Alert className="border-green-200 bg-green-50">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <AlertTitle className="text-green-800">All Budgets On Track!</AlertTitle>
+                    <AlertDescription className="text-green-700">
+                        Great job! All your budgets are within healthy spending limits.
+                    </AlertDescription>
+                </Alert>
+            ) : null}
+
+            {/* Financial Overview Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Card className="border-l-4 border-l-red-500">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium text-gray-600">Total Spent</CardTitle>
+                        <Wallet className="h-5 w-5 text-red-500" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-3xl font-bold text-red-600">
+                            {formatCurrency(stats.totalSpent)}
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">This month</p>
+                    </CardContent>
+                </Card>
+
+                {stats.totalIncome !== undefined && (
+                    <Card className="border-l-4 border-l-green-500">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium text-gray-600">Total Income</CardTitle>
+                            <DollarSign className="h-5 w-5 text-green-500" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-3xl font-bold text-green-600">
+                                {formatCurrency(stats.totalIncome)}
+                            </div>
+                            <p className="text-xs text-gray-500 mt-2">This month</p>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {stats.netAmount !== undefined && (
+                    <Card className="border-l-4 border-l-blue-500">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium text-gray-600">Net Amount</CardTitle>
+                            {stats.netAmount >= 0 ? (
+                                <TrendingUp className="h-5 w-5 text-blue-500" />
+                            ) : (
+                                <TrendingDown className="h-5 w-5 text-blue-500" />
+                            )}
+                        </CardHeader>
+                        <CardContent>
+                            <div className={`text-3xl font-bold ${stats.netAmount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                {formatCurrency(Math.abs(stats.netAmount))}
+                            </div>
+                            <p className="text-xs text-gray-500 mt-2">
+                                {stats.netAmount >= 0 ? 'Positive' : 'Negative'} balance
+                            </p>
+                        </CardContent>
+                    </Card>
+                )}
+
+                <Card className="border-l-4 border-l-purple-500">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium text-gray-600">Top Categories</CardTitle>
+                        <Target className="h-5 w-5 text-purple-500" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-2">
+                            {stats.topCategory && (
+                                <div>
+                                    <Badge variant="outline" className="mb-1">Expense</Badge>
+                                    <p className="text-lg font-semibold text-purple-600">{stats.topCategory}</p>
+                                </div>
+                            )}
+                            {stats.topIncomeCategory && (
+                                <div>
+                                    <Badge variant="outline" className="mb-1">Income</Badge>
+                                    <p className="text-lg font-semibold text-green-600">{stats.topIncomeCategory}</p>
+                                </div>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Payment Methods Card */}
+            {stats.topPaymentMethods.length > 0 && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <CreditCard className="h-5 w-5" />
+                            Top Payment Methods
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {stats.topPaymentMethods.slice(0, 6).map((method, index) => (
+                                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <span className="font-medium">{method}</span>
+                                    <Badge variant="secondary">#{index + 1}</Badge>
+                                </div>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
             )}
-          </div>
-        </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-xl font-semibold mb-4">Monthly Trend</h3>
-          <div className="h-64">
-            {stats.monthlyData.length > 0 ? (
-              <Line data={lineData} options={chartOptions} />
-            ) : (
-              <div className="flex items-center justify-center h-full text-gray-500">
-                No monthly data available
-              </div>
+            {/* Budget Overview */}
+            {budgets.length > 0 && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <PiggyBank className="h-5 w-5" />
+                            Budget Overview
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        {budgets.map((budget) => {
+                            const status = getBudgetStatus(budget);
+                            const remaining = budget.limitAmount - budget.currentSpent;
+
+                            return (
+                                <div key={budget._id} className="space-y-3">
+                                    <div className="flex justify-between items-center">
+                                        <div>
+                                            <h4 className="font-semibold text-lg">{budget.category}</h4>
+                                            <p className="text-sm text-gray-500">
+                                                {new Date(budget.month + '-01').toLocaleDateString('en-US', {
+                                                    month: 'long',
+                                                    year: 'numeric'
+                                                })}
+                                            </p>
+                                        </div>
+                                        <Badge variant={status.variant}>{status.text}</Badge>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between text-sm">
+                                            <span>Spent: <strong>{formatCurrency(budget.currentSpent)}</strong></span>
+                                            <span>Limit: <strong>{formatCurrency(budget.limitAmount)}</strong></span>
+                                        </div>
+
+                                        <Progress
+                                            value={Math.min(status.percentage, 100)}
+                                            className="h-3"
+                                        />
+
+                                        <div className="flex justify-between text-sm text-gray-600">
+                                            <span>{status.percentage.toFixed(1)}% used</span>
+                                            {remaining > 0 ? (
+                                                <span className="text-green-600">{formatCurrency(remaining)} remaining</span>
+                                            ) : (
+                                                <span className="text-red-600">Over by {formatCurrency(Math.abs(remaining))}</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    {budgets.indexOf(budget) < budgets.length - 1 && <Separator />}
+                                </div>
+                            );
+                        })}
+                    </CardContent>
+                </Card>
             )}
-          </div>
+
+            {/* Charts Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Expense Categories Pie Chart */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <PieChart className="h-5 w-5 text-red-500" />
+                            Expense Categories
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="h-80">
+                            {Object.keys(stats.categoryData).length > 0 ? (
+                                <Pie data={expensePieData} options={chartOptions} />
+                            ) : (
+                                <div className="flex items-center justify-center h-full text-gray-500">
+                                    <div className="text-center">
+                                        <PieChart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                                        <p>No expense data available</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Income Categories Pie Chart */}
+                {Object.keys(stats.incomeCategoryData || {}).length > 0 && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <PieChart className="h-5 w-5 text-green-500" />
+                                Income Sources
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="h-80">
+                                <Pie data={incomePieData} options={chartOptions} />
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {/* Payment Methods Bar Chart */}
+                {Object.keys(stats.paymentMethodData).length > 0 && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <BarChart3 className="h-5 w-5 text-purple-500" />
+                                Payment Method Usage
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="h-80">
+                                <Bar data={paymentMethodData} options={chartOptions} />
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {/* Monthly Trends Line Chart */}
+                <Card className={Object.keys(stats.incomeCategoryData || {}).length > 0 ? "lg:col-span-1" : "lg:col-span-2"}>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Activity className="h-5 w-5 text-blue-500" />
+                            Monthly Financial Trends
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="h-80">
+                            {stats.monthlyData.length > 0 ? (
+                                <Line data={monthlyTrendData} options={chartOptions} />
+                            ) : (
+                                <div className="flex items-center justify-center h-full text-gray-500">
+                                    <div className="text-center">
+                                        <Activity className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                                        <p>No monthly trend data available</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
         </div>
-      </div>
-      {/* Analysis Section
-{AnalysisData && (
-  <div className="mt-10">
-    <h2 className="text-2xl font-bold text-gray-800 mb-4">Spending Analysis</h2>
-    
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold text-gray-700 mb-2">Summary</h3>
-        <p><strong>Total Expenses:</strong> {AnalysisData.expense_count}</p>
-        <p><strong>Total Amount Spent:</strong> {formatCurrency(AnalysisData.total_expenses)}</p>
-        <p><strong>Analysis Period:</strong> {AnalysisData.period}</p>
-        <p><strong>Analysis Date:</strong> {new Date(AnalysisData.analysis_date).toLocaleDateString()}</p>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold text-gray-700 mb-2">Spending Trend</h3>
-        {AnalysisData.trends && (
-          <>
-            <p><strong>Trend:</strong> {AnalysisData.trends.trend}</p>
-            <p><strong>Daily Average:</strong> {formatCurrency(AnalysisData.trends.daily_average)}</p>
-            <p><strong>Recent Weekly Avg:</strong> {formatCurrency(AnalysisData.trends.recent_weekly_avg)}</p>
-            <p><strong>Earlier Weekly Avg:</strong> {formatCurrency(AnalysisData.trends.earlier_weekly_avg)}</p>
-            <p><strong>Highest Spending Day:</strong> {AnalysisData.trends.highest_spending_day.date} ({formatCurrency(AnalysisData.trends.highest_spending_day.amount)})</p>
-            <p><strong>Lowest Spending Day:</strong> {AnalysisData.trends.lowest_spending_day.date} ({formatCurrency(AnalysisData.trends.lowest_spending_day.amount)})</p>
-          </>
-        )}
-      </div>
-    </div>
-
-    {Suggestions.length > 0 && (
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h3 className="text-lg font-semibold text-gray-700 mb-4">Suggestions</h3>
-        <ul className="list-disc list-inside space-y-2 text-gray-600">
-          {Suggestions.map((suggestion, idx) => (
-            <li key={idx}>{suggestion.message}</li>
-          ))}
-        </ul>
-      </div>
-    )}
-  </div>
-)} */}
-
-    </div>
-  );
+    );
 }

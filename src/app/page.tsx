@@ -8,11 +8,13 @@ import {
   // type CarouselApi
 } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay"
+
+
+
 export default function Landing() {
-  const [currentFeature, setCurrentFeature] = useState(0);
 
   const features = [
-    { icon: '💰', title: 'Smart Expense Tracking', desc: 'AI-powered categorization' },
+    { icon: '💰', title: 'Smart Transaction Tracking', desc: 'AI-powered categorization' },
     { icon: '📊', title: 'Budget Management', desc: 'Stay on track with intelligent alerts' },
     { icon: '🎯', title: 'Goal Setting', desc: 'Achieve your financial dreams' },
     { icon: '📈', title: 'Advanced Analytics', desc: 'Deep insights into your spending' },
@@ -27,6 +29,7 @@ export default function Landing() {
     }, 3000);
     return () => clearInterval(interval);
   }, [totalSlides]);
+
 
 
   return (
@@ -55,12 +58,12 @@ export default function Landing() {
             <p className="text-gray-600 text-sm">{features[currentFeature].desc}</p>
           </div> */}
           {/* Feature Carousel */}
-          <Carousel className="w-full max-w-md mx-auto mb-10" 
-          plugins={[
-            Autoplay({
-              delay: 2000,
-            }),
-          ]}>
+          <Carousel className="w-full max-w-md mx-auto mb-10"
+            plugins={[
+              Autoplay({
+                delay: 2000,
+              }),
+            ]}>
             <CarouselContent>
               {features.map((feature, index) => (
                 <CarouselItem key={index} className="p-4">

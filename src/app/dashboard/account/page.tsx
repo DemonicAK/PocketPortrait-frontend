@@ -39,11 +39,12 @@ export default function AccountPage() {
 
   const fetchBudgets = async (): Promise<void> => {
     try {
-      const token = localStorage.getItem('token');
+      // const token = localStorage.getItem('token');
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/budgets`,
         {
-          headers: { 'Authorization': `Bearer ${token}` }
+          // headers: { 'Authorization': `Bearer ${token}` }
+          credentials: 'include', // Important: includes cookies in request
         }
       );
 
@@ -61,15 +62,16 @@ export default function AccountPage() {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem('token');
+      // const token = localStorage.getItem('token');
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/budgets`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            // 'Authorization': `Bearer ${token}`
           },
+          credentials: 'include', // Important: includes cookies in request
           body: JSON.stringify({
             category: budgetForm.category,
             limitAmount: parseFloat(budgetForm.limitAmount),
@@ -98,7 +100,7 @@ export default function AccountPage() {
     setEditingBudget(budget);
     setBudgetForm({
       category: budget.category,
-      limitAmount: budget.limitAmount.toString(),
+      limitAmount: budget.limitAmount.toString() || '',
       month: budget.month
     });
     setShowBudgetForm(true);
@@ -152,7 +154,7 @@ export default function AccountPage() {
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 User ID
               </label>
-              <p className="text-gray-600 text-sm font-mono">{user?._id || 'Loading...'}</p>
+              <p className="text-gray-600 text-sm font-mono">{user?.id || 'Loading...'}</p>
             </div>
           </div>
         </div>

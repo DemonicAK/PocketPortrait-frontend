@@ -16,8 +16,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
-
-    if (!token || !userData) {
+    // !token ||
+    if ( !userData) {
       router.push('/auth');
       return;
     }
@@ -34,8 +34,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   }, [router]);
 
   const handleLogout = (): void => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    const response = fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/logout`, {
+      method: 'POST',
+      credentials: 'include' // Important: includes cookies in request
+    });
+    response.then(() => {
+      console.log('User logged out successfully');
+      localStorage.removeItem('user');
+      router.push('/auth');
+    }).catch(error => {
+      console.error('Logout failed:', error);
+      alert('Logout failed. Please try again.');
+    });
     router.push('/');
   };
 
@@ -55,7 +65,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <nav className="bg-white shadow-md">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center h-16">
-            <h1 className="text-xl font-bold text-gray-800">Finance Tracker</h1>
+            <Link href="/dashboard" className="flex items-center space-x-2">
+              <h1 className="text-xl font-bold text-gray-800">Finance Tracker</h1>
+            </Link>
 
             <div className="flex space-x-8">
               <Link

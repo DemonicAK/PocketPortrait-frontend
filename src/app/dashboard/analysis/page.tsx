@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Title, BarElement } from 'chart.js';
 import { Pie, Line, Bar } from 'react-chartjs-2';
-import { AnalysisData, Suggestion, CategoryInsights, SpendingSummary, SpendingTrends } from '@/types';
+import { AnalysisData, Suggestion, CategoryInsights, SpendingSummary, SpendingTrends} from '@/types';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Title, BarElement);
 
@@ -15,9 +15,11 @@ export default function Analysis() {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [trendPeriod, setTrendPeriod] = useState<number>(30);
-
+  // const [AnalysisData, setAnalysisData] = useState<AnalysisData | null>(null);
+  // const [Suggestions, setSuggestions] = useState<Suggestion[]>([]);
   useEffect(() => {
     fetchAllAnalysisData();
+    // getTransactionAnalysis(); // Fetch comprehensive analysis data
   }, []);
 
   const fetchAllAnalysisData = async (): Promise<void> => {
@@ -33,17 +35,71 @@ export default function Analysis() {
       setLoading(false);
     }
   };
+   //   const getTransactionAnalysis = async () => {
+    //     try {
+    //       const token = localStorage.getItem('token');
+    //       const response = await fetch(
+    //         `${process.env.NEXT_PUBLIC_PYTHON_URL || 'http://localhost:8000'}/api/v1/analysis/comprehensive`,
+    //         {
+    //           headers: { 
+    //             'Authorization': `Bearer ${token}`,
+    //             'Content-Type': 'application/json'
+    //           }
+    //         }
+    //       );
+  
+    //       if (response.ok) {
+    //         const analysisData = await response.json();
+  
+    //         if (analysisData.success) {
+    //           setAnalysisData(analysisData.data);
+    //           setSuggestions(analysisData.data.suggestions || []);
+    //         } else {
+    //           console.error('Analysis failed:', analysisData.message);
+    //           // Set empty state
+    //           // Or provide a default value:
+    // const trendsi = AnalysisData?.trends || {
+    //   weekly_spending: {},
+    //   daily_average: 0,
+    //   trend: 'insufficient_data' as const,
+    //   recent_weekly_avg: 0,
+    //   earlier_weekly_avg: 0,
+    //   highest_spending_day: { date: '', amount: 0 },
+    //   lowest_spending_day: { date: '', amount: 0 }
+    // };
+    //           setAnalysisData({
+    //             total_Transactions: 0,
+    //             Transaction_count: 0,
+    //             category_analysis: {},
+    //             trends: trendsi,
+    //             suggestions: [],
+    //             period: '30 days',
+    //             analysis_date: new Date().toISOString()
+    //           });
+    //           setSuggestions([]);
+    //         }
+    //       } else {
+    //         throw new Error(`HTTP error! status: ${response.status}`);
+    //       }
+    //     } catch (error) {
+    //       console.error('Error fetching Transaction analysis:', error);
+    //       // Set error state or show notification
+    //       setAnalysisData(null);
+    //       setSuggestions([]);
+    //     }
+    //   };
 
   const getComprehensiveAnalysis = async (): Promise<void> => {
     try {
-      const token = localStorage.getItem('token');
+      // const token = localStorage.getItem('token');
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_PYTHON_URL || 'http://localhost:8000'}/api/v1/analysis/comprehensive`,
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            // 'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
-          }
+          },
+          credentials: 'include', // Important: includes cookies in request
         }
       );
 
@@ -61,14 +117,15 @@ export default function Analysis() {
 
   const getCategoryInsights = async (category: string): Promise<void> => {
     try {
-      const token = localStorage.getItem('token');
+      // const token = localStorage.getItem('token');
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_PYTHON_URL || 'http://localhost:8000'}/api/v1/analysis/category/${category}`,
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            // 'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
-          }
+          },
+          credentials: 'include', // Important: includes cookies in request
         }
       );
 
@@ -85,14 +142,15 @@ export default function Analysis() {
 
   const getSpendingSummary = async (): Promise<void> => {
     try {
-      const token = localStorage.getItem('token');
+      // const token = localStorage.getItem('token');
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_PYTHON_URL || 'http://localhost:8000'}/api/v1/analysis/summary`,
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            // 'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
-          }
+          },
+          credentials: 'include', // Important: includes cookies in request
         }
       );
 
@@ -109,14 +167,15 @@ export default function Analysis() {
 
   const getSpendingTrends = async (days: number = 30): Promise<void> => {
     try {
-      const token = localStorage.getItem('token');
+      // const token = localStorage.getItem('token');
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_PYTHON_URL || 'http://localhost:8000'}/api/v1/analysis/trends?days=${days}`,
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            // 'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
-          }
+          },
+          credentials: 'include', // Important: includes cookies in request
         }
       );
 
@@ -196,7 +255,7 @@ export default function Analysis() {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">Expense Analysis</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">Transaction Analysis</h1>
 
       {/* Comprehensive Analysis */}
       {analysisData && (
@@ -205,13 +264,13 @@ export default function Analysis() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Expenses</h3>
-              <p className="text-3xl font-bold text-blue-600">{analysisData.expense_count}</p>
+              <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Transactions</h3>
+              <p className="text-3xl font-bold text-blue-600">{analysisData.Transaction_count}</p>
             </div>
 
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Amount</h3>
-              <p className="text-3xl font-bold text-green-600">{formatCurrency(analysisData.total_expenses)}</p>
+              <p className="text-3xl font-bold text-green-600">{formatCurrency(analysisData.total_Transactions)}</p>
             </div>
 
             <div className="bg-white rounded-lg shadow-md p-6">
@@ -351,8 +410,8 @@ export default function Analysis() {
                 key={category}
                 onClick={() => handleCategorySelect(category)}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${selectedCategory === category
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
               >
                 {category}
@@ -384,12 +443,12 @@ export default function Analysis() {
                 <p className="text-lg font-semibold">{formatCurrency(categoryInsights.daily_average)}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Highest Expense</p>
-                <p className="text-lg font-semibold">{formatCurrency(categoryInsights.highest_expense)}</p>
+                <p className="text-sm text-gray-600">Highest Transaction</p>
+                <p className="text-lg font-semibold">{formatCurrency(categoryInsights.highest_Transaction)}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Lowest Expense</p>
-                <p className="text-lg font-semibold">{formatCurrency(categoryInsights.lowest_expense)}</p>
+                <p className="text-sm text-gray-600">Lowest Transaction</p>
+                <p className="text-lg font-semibold">{formatCurrency(categoryInsights.lowest_Transaction)}</p>
               </div>
             </div>
 
@@ -427,8 +486,8 @@ export default function Analysis() {
                 key={days}
                 onClick={() => handleTrendPeriodChange(days)}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${trendPeriod === days
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
               >
                 {days} days
