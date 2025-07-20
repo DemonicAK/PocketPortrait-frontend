@@ -3,61 +3,44 @@ import { useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { User } from '@/types';
+import { fetchUser } from '@/lib/fetchUser';
 
 interface DashboardLayoutProps {
   children: ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const [user, setUser] = useState<User | null>(null);
+  // const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    // !token ||
-    if ( !userData) {
-      router.push('/auth');
-      return;
-    }
+
+  const handleLogout = async (): Promise<void> => {
+
 
     try {
-      const parsedUser: User = JSON.parse(userData);
-      setUser(parsedUser);
-    } catch (error) {
-      console.error('Error parsing user data:', error);
-      router.push('/auth');
-    } finally {
-      setLoading(false);
-    }
-  }, [router]);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/logout`, {
+        method: 'POST',
+        credentials: 'include', // ✅ Include cookies
+      });
 
-  const handleLogout = (): void => {
-    const response = fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/logout`, {
-      method: 'POST',
-      credentials: 'include' // Important: includes cookies in request
-    });
-    response.then(() => {
-      console.log('User logged out successfully');
-      localStorage.removeItem('user');
-      router.push('/auth');
-    }).catch(error => {
-      console.error('Logout failed:', error);
-      alert('Logout failed. Please try again.');
-    });
-    router.push('/');
+      if (response.ok) {
+        console.log('User logged out successfully');
+      } else {
+        console.error('Logout failed');
+        alert('Logout failed. Please try again.');
+        return; // ❗Avoid redirecting if logout failed
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      alert('An error occurred while logging out. Please try again.');
+      return; // ❗Avoid redirecting if error occurred
+    }
+
+    router.push('/auth'); // ✅ Redirect only on successful logout
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Loading...</div>
-      </div>
-    );
-  }
 
-  if (!user) return <></>;
 
   return (
     <div className="min-h-screen bg-gray-50">

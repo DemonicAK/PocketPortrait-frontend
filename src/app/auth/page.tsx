@@ -31,11 +31,10 @@ export default function Auth() {
       const data: AuthResponse = await response.json();
       // console.log('Response data:', data);
       if (response.ok) {
-        // localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
         // console.log('User data:', data.user);
         // console.log("reached here");
         // Redirect to dashboard or home page
+
         router.push('/dashboard');
       } else {
         alert(data.message || 'Authentication failed');

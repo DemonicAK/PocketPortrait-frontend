@@ -40,9 +40,10 @@ export default function Dashboard() {
 
   const fetchDashboardData = async (): Promise<void> => {
     try {
-      const token = localStorage.getItem('token');
+      // const token = localStorage.getItem('token');
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/transactions/dashboard`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        // headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include' // Important: includes cookies in request
       });
 
       if (response.ok) {

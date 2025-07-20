@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { User } from '@/types';
+import { fetchUser } from '@/lib/fetchUser';
 
 interface Budget {
   _id?: string;
@@ -26,15 +27,19 @@ export default function AccountPage() {
   const categories = ['Food', 'Rent', 'Shopping', 'Transport', 'Entertainment', 'Healthcare', 'Other'];
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      try {
-        setUser(JSON.parse(userData));
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-      }
-    }
-    fetchBudgets();
+      const loadUserData = async () => {
+        try {
+          const userData = await fetchUser();
+          if (userData) {
+            setUser(userData);
+            console.log('User fetched successfully:', userData);
+            fetchBudgets();
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      };
+      loadUserData();
   }, []);
 
   const fetchBudgets = async (): Promise<void> => {
@@ -62,7 +67,7 @@ export default function AccountPage() {
     setLoading(true);
 
     try {
-      // const token = localStorage.getItem('token');
+  
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/budgets`,
         {
@@ -100,7 +105,7 @@ export default function AccountPage() {
     setEditingBudget(budget);
     setBudgetForm({
       category: budget.category,
-      limitAmount: budget.limitAmount.toString() || '',
+      limitAmount: budget.limitAmount?.toString() ?? '',
       month: budget.month
     });
     setShowBudgetForm(true);
