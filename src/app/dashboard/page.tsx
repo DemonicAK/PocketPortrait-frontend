@@ -8,7 +8,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointE
 
 
 
-export default function Dashboard(): JSX.Element {
+export default function Dashboard() {
   const [stats, setStats] = useState<DashboardStats>({
     totalSpent: 0,
     topCategory: '',
@@ -33,7 +33,7 @@ export default function Dashboard(): JSX.Element {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/expenses/dashboard`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      
+
       if (response.ok) {
         const data: DashboardStats = await response.json();
         setStats(data);
@@ -44,59 +44,59 @@ export default function Dashboard(): JSX.Element {
       setLoading(false);
     }
   };
-//   const getExpenseAnalysis = async () => {
-//     try {
-//       const token = localStorage.getItem('token');
-//       const response = await fetch(
-//         `${process.env.NEXT_PUBLIC_PYTHON_URL || 'http://localhost:8000'}/api/v1/analysis/comprehensive`,
-//         {
-//           headers: { 
-//             'Authorization': `Bearer ${token}`,
-//             'Content-Type': 'application/json'
-//           }
-//         }
-//       );
-  
-//       if (response.ok) {
-//         const analysisData = await response.json();
-        
-//         if (analysisData.success) {
-//           setAnalysisData(analysisData.data);
-//           setSuggestions(analysisData.data.suggestions || []);
-//         } else {
-//           console.error('Analysis failed:', analysisData.message);
-//           // Set empty state
-//           // Or provide a default value:
-// const trendsi = AnalysisData?.trends || {
-//   weekly_spending: {},
-//   daily_average: 0,
-//   trend: 'insufficient_data' as const,
-//   recent_weekly_avg: 0,
-//   earlier_weekly_avg: 0,
-//   highest_spending_day: { date: '', amount: 0 },
-//   lowest_spending_day: { date: '', amount: 0 }
-// };
-//           setAnalysisData({
-//             total_expenses: 0,
-//             expense_count: 0,
-//             category_analysis: {},
-//             trends: trendsi,
-//             suggestions: [],
-//             period: '30 days',
-//             analysis_date: new Date().toISOString()
-//           });
-//           setSuggestions([]);
-//         }
-//       } else {
-//         throw new Error(`HTTP error! status: ${response.status}`);
-//       }
-//     } catch (error) {
-//       console.error('Error fetching expense analysis:', error);
-//       // Set error state or show notification
-//       setAnalysisData(null);
-//       setSuggestions([]);
-//     }
-//   };
+  //   const getExpenseAnalysis = async () => {
+  //     try {
+  //       const token = localStorage.getItem('token');
+  //       const response = await fetch(
+  //         `${process.env.NEXT_PUBLIC_PYTHON_URL || 'http://localhost:8000'}/api/v1/analysis/comprehensive`,
+  //         {
+  //           headers: { 
+  //             'Authorization': `Bearer ${token}`,
+  //             'Content-Type': 'application/json'
+  //           }
+  //         }
+  //       );
+
+  //       if (response.ok) {
+  //         const analysisData = await response.json();
+
+  //         if (analysisData.success) {
+  //           setAnalysisData(analysisData.data);
+  //           setSuggestions(analysisData.data.suggestions || []);
+  //         } else {
+  //           console.error('Analysis failed:', analysisData.message);
+  //           // Set empty state
+  //           // Or provide a default value:
+  // const trendsi = AnalysisData?.trends || {
+  //   weekly_spending: {},
+  //   daily_average: 0,
+  //   trend: 'insufficient_data' as const,
+  //   recent_weekly_avg: 0,
+  //   earlier_weekly_avg: 0,
+  //   highest_spending_day: { date: '', amount: 0 },
+  //   lowest_spending_day: { date: '', amount: 0 }
+  // };
+  //           setAnalysisData({
+  //             total_expenses: 0,
+  //             expense_count: 0,
+  //             category_analysis: {},
+  //             trends: trendsi,
+  //             suggestions: [],
+  //             period: '30 days',
+  //             analysis_date: new Date().toISOString()
+  //           });
+  //           setSuggestions([]);
+  //         }
+  //       } else {
+  //         throw new Error(`HTTP error! status: ${response.status}`);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching expense analysis:', error);
+  //       // Set error state or show notification
+  //       setAnalysisData(null);
+  //       setSuggestions([]);
+  //     }
+  //   };
 
   const fetchBudgets = async (): Promise<void> => {
     try {
@@ -126,7 +126,7 @@ export default function Dashboard(): JSX.Element {
 
   const getBudgetStatus = (budget: Budget): { color: string; text: string; percentage: number } => {
     const percentage = (budget.currentSpent / budget.limitAmount) * 100;
-    
+
     if (percentage >= 100) {
       return { color: 'text-red-600 bg-red-100', text: 'Over Budget', percentage };
     } else if (percentage >= 80) {
@@ -150,7 +150,7 @@ export default function Dashboard(): JSX.Element {
     datasets: [{
       data: Object.values(stats.categoryData),
       backgroundColor: [
-        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
         '#9966FF', '#FF9F40', '#FF6384'
       ],
       borderWidth: 1
@@ -189,7 +189,7 @@ export default function Dashboard(): JSX.Element {
   return (
     <div>
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Dashboard</h1>
-      
+
       {/* Budget Alerts */}
       {alertBudgets.length > 0 ? (
         <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
@@ -209,7 +209,7 @@ export default function Dashboard(): JSX.Element {
                     const remaining = budget.limitAmount - budget.currentSpent;
                     return (
                       <li key={budget._id}>
-                        <strong>{budget.category}</strong>: {status.percentage.toFixed(1)}% used 
+                        <strong>{budget.category}</strong>: {status.percentage.toFixed(1)}% used
                         {remaining > 0 ? (
                           <span className="text-green-600"> ({formatCurrency(remaining)} remaining)</span>
                         ) : (
@@ -247,12 +247,12 @@ export default function Dashboard(): JSX.Element {
           <h3 className="text-lg font-semibold text-gray-700">Total Spent This Month</h3>
           <p className="text-3xl font-bold text-blue-600">₹{stats.totalSpent.toLocaleString()}</p>
         </div>
-        
+
         <div className="bg-white rounded-lg shadow-md p-6">
           <h3 className="text-lg font-semibold text-gray-700">Top Category</h3>
           <p className="text-2xl font-bold text-green-600">{stats.topCategory || 'No data'}</p>
         </div>
-        
+
         <div className="bg-white rounded-lg shadow-md p-6">
           <h3 className="text-lg font-semibold text-gray-700">Top Payment Methods</h3>
           <div className="space-y-1">
@@ -274,16 +274,16 @@ export default function Dashboard(): JSX.Element {
             {budgets.map((budget) => {
               const status = getBudgetStatus(budget);
               const percentage = (budget.currentSpent / budget.limitAmount) * 100;
-              
+
               return (
                 <div key={budget._id} className="border border-gray-200 rounded-lg p-4">
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <h4 className="font-semibold text-lg">{budget.category}</h4>
                       <p className="text-gray-600 text-sm">
-                        {new Date(budget.month + '-01').toLocaleDateString('en-US', { 
-                          month: 'long', 
-                          year: 'numeric' 
+                        {new Date(budget.month + '-01').toLocaleDateString('en-US', {
+                          month: 'long',
+                          year: 'numeric'
                         })}
                       </p>
                     </div>
@@ -291,23 +291,22 @@ export default function Dashboard(): JSX.Element {
                       {status.text}
                     </span>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Spent: {formatCurrency(budget.currentSpent)}</span>
                       <span>Limit: {formatCurrency(budget.limitAmount)}</span>
                     </div>
-                    
+
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div
-                        className={`h-2 rounded-full transition-all ${
-                          percentage >= 100 ? 'bg-red-500' : 
-                          percentage >= 80 ? 'bg-orange-500' : 'bg-green-500'
-                        }`}
+                        className={`h-2 rounded-full transition-all ${percentage >= 100 ? 'bg-red-500' :
+                            percentage >= 80 ? 'bg-orange-500' : 'bg-green-500'
+                          }`}
                         style={{ width: `${Math.min(percentage, 100)}%` }}
                       ></div>
                     </div>
-                    
+
                     <div className="text-right text-sm text-gray-600">
                       {percentage.toFixed(1)}% used
                     </div>
@@ -318,7 +317,7 @@ export default function Dashboard(): JSX.Element {
           </div>
         </div>
       )}
-      
+
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -333,7 +332,7 @@ export default function Dashboard(): JSX.Element {
             )}
           </div>
         </div>
-        
+
         <div className="bg-white rounded-lg shadow-md p-6">
           <h3 className="text-xl font-semibold mb-4">Monthly Trend</h3>
           <div className="h-64">

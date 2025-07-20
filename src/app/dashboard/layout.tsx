@@ -8,7 +8,7 @@ interface DashboardLayoutProps {
   children: ReactNode;
 }
 
-export default function DashboardLayout({ children }: DashboardLayoutProps): JSX.Element {
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
@@ -16,12 +16,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps): JSX
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
-    
+
     if (!token || !userData) {
       router.push('/auth');
       return;
     }
-    
+
     try {
       const parsedUser: User = JSON.parse(userData);
       setUser(parsedUser);
@@ -56,22 +56,22 @@ export default function DashboardLayout({ children }: DashboardLayoutProps): JSX
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             <h1 className="text-xl font-bold text-gray-800">Finance Tracker</h1>
-            
+
             <div className="flex space-x-8">
-              <Link 
-                href="/dashboard/entry" 
+              <Link
+                href="/dashboard/entry"
                 className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
               >
                 Entry New
               </Link>
-              <Link 
-                href="/dashboard/transactions" 
+              <Link
+                href="/dashboard/transactions"
                 className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
               >
-                 transactions
+                transactions
               </Link>
-              <Link 
-                href="/dashboard" 
+              <Link
+                href="/dashboard"
                 className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
               >
                 Dashboard
@@ -87,13 +87,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps): JSX
                   Account
                 </button>
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
-                  <Link 
-                    href="/dashboard/account" 
+                  <Link
+                    href="/dashboard/account"
                     className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
                   >
                     Profile
                   </Link>
-                  <button 
+                  <button
                     onClick={handleLogout}
                     className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
                   >

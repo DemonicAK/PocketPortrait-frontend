@@ -3,7 +3,7 @@ import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { AuthResponse } from '@/types';
 
-export default function Auth(): React.JSX.Element {
+export default function Auth() {
   const [isLogin, setIsLogin] = useState<boolean>(true);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');

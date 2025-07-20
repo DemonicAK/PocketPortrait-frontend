@@ -1,9 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Expense,PaginationInfo,TransactionsResponse } from '@/types';
+import { Expense, PaginationInfo, TransactionsResponse } from '@/types';
 
 
-export default function TransactionsPage(): JSX.Element {
+export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<Expense[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: 1,
@@ -108,7 +108,7 @@ export default function TransactionsPage(): JSX.Element {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
             />
           </div>
-          
+
           <div>
             <label className="block text-gray-700 text-sm font-bold mb-2">
               End Date
@@ -120,7 +120,7 @@ export default function TransactionsPage(): JSX.Element {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
             />
           </div>
-          
+
           <div>
             <label className="block text-gray-700 text-sm font-bold mb-2">
               Rows per page
@@ -135,7 +135,7 @@ export default function TransactionsPage(): JSX.Element {
               ))}
             </select>
           </div>
-          
+
           <div className="flex gap-2">
             <button
               onClick={() => handleDateFilter(filters.startDate, filters.endDate)}
@@ -222,7 +222,7 @@ export default function TransactionsPage(): JSX.Element {
                     {pagination.totalItems} results
                   </span>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => handlePageChange(pagination.currentPage - 1)}
@@ -231,13 +231,13 @@ export default function TransactionsPage(): JSX.Element {
                   >
                     Previous
                   </button>
-                  
+
                   <div className="flex space-x-1">
                     {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
                       .filter(page => {
                         const current = pagination.currentPage;
-                        return page === 1 || page === pagination.totalPages || 
-                               (page >= current - 2 && page <= current + 2);
+                        return page === 1 || page === pagination.totalPages ||
+                          (page >= current - 2 && page <= current + 2);
                       })
                       .map((page, index, array) => (
                         <div key={page}>
@@ -246,18 +246,17 @@ export default function TransactionsPage(): JSX.Element {
                           )}
                           <button
                             onClick={() => handlePageChange(page)}
-                            className={`px-3 py-1 text-sm rounded-md ${
-                              page === pagination.currentPage
+                            className={`px-3 py-1 text-sm rounded-md ${page === pagination.currentPage
                                 ? 'bg-blue-600 text-white'
                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                            }`}
+                              }`}
                           >
                             {page}
                           </button>
                         </div>
                       ))}
                   </div>
-                  
+
                   <button
                     onClick={() => handlePageChange(pagination.currentPage + 1)}
                     disabled={!pagination.hasNext}

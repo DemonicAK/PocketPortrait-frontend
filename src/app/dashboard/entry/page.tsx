@@ -5,7 +5,7 @@ import { Expense } from '@/types';
 const categories: string[] = ['Food', 'Rent', 'Shopping', 'Transport', 'Entertainment', 'Healthcare', 'Other'];
 const paymentMethods: string[] = ['UPI', 'Credit Card', 'Debit Card', 'Cash', 'Net Banking'];
 
-export default function EntryPage(): JSX.Element {
+export default function EntryPage() {
   const [expense, setExpense] = useState<Omit<Expense, '_id' | 'userId' | 'createdAt'>>({
     amount: 0,
     category: '',
@@ -18,7 +18,7 @@ export default function EntryPage(): JSX.Element {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/expenses`, {
@@ -29,7 +29,7 @@ export default function EntryPage(): JSX.Element {
         },
         body: JSON.stringify(expense)
       });
-      
+
       if (response.ok) {
         alert('Expense added successfully!');
         setExpense({
@@ -60,7 +60,7 @@ export default function EntryPage(): JSX.Element {
   return (
     <div className="max-w-2xl mx-auto">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Add New Expense</h1>
-      
+
       <div className="bg-white rounded-lg shadow-md p-6">
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -79,7 +79,7 @@ export default function EntryPage(): JSX.Element {
                 disabled={loading}
               />
             </div>
-            
+
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 Category
@@ -97,7 +97,7 @@ export default function EntryPage(): JSX.Element {
                 ))}
               </select>
             </div>
-            
+
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 Date
@@ -111,7 +111,7 @@ export default function EntryPage(): JSX.Element {
                 disabled={loading}
               />
             </div>
-            
+
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 Payment Method
@@ -130,7 +130,7 @@ export default function EntryPage(): JSX.Element {
               </select>
             </div>
           </div>
-          
+
           <div className="mt-6">
             <label className="block text-gray-700 text-sm font-bold mb-2">
               Notes (Optional)
@@ -143,7 +143,7 @@ export default function EntryPage(): JSX.Element {
               disabled={loading}
             />
           </div>
-          
+
           <div className="mt-8">
             <button
               type="submit"

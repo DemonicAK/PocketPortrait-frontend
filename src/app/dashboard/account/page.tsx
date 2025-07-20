@@ -11,7 +11,7 @@ interface Budget {
   year: number;
 }
 
-export default function AccountPage(): JSX.Element {
+export default function AccountPage() {
   const [user, setUser] = useState<User | null>(null);
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -123,7 +123,7 @@ export default function AccountPage(): JSX.Element {
 
   const getBudgetStatus = (budget: Budget): { color: string; text: string } => {
     const percentage = (budget.currentSpent / budget.limitAmount) * 100;
-    
+
     if (percentage >= 100) {
       return { color: 'text-red-600 bg-red-100', text: 'Over Budget' };
     } else if (percentage >= 80) {
@@ -136,7 +136,7 @@ export default function AccountPage(): JSX.Element {
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Account Settings</h1>
-      
+
       {/* Profile Information */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <div className="mb-6">
@@ -156,7 +156,7 @@ export default function AccountPage(): JSX.Element {
             </div>
           </div>
         </div>
-        
+
         <div className="border-t pt-6">
           <h2 className="text-xl font-semibold mb-4">Account Actions</h2>
           <div className="space-y-3">
@@ -209,7 +209,7 @@ export default function AccountPage(): JSX.Element {
                     ))}
                   </select>
                 </div>
-                
+
                 <div>
                   <label className="block text-gray-700 text-sm font-bold mb-2">
                     Budget Limit (₹)
@@ -225,7 +225,7 @@ export default function AccountPage(): JSX.Element {
                     placeholder="Enter amount"
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-gray-700 text-sm font-bold mb-2">
                     Month
@@ -239,7 +239,7 @@ export default function AccountPage(): JSX.Element {
                   />
                 </div>
               </div>
-              
+
               <div className="flex gap-2">
                 <button
                   type="submit"
@@ -270,16 +270,16 @@ export default function AccountPage(): JSX.Element {
               {budgets.map((budget) => {
                 const status = getBudgetStatus(budget);
                 const percentage = (budget.currentSpent / budget.limitAmount) * 100;
-                
+
                 return (
                   <div key={budget._id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex justify-between items-start mb-3">
                       <div>
                         <h4 className="font-semibold text-lg">{budget.category}</h4>
                         <p className="text-gray-600 text-sm">
-                          {new Date(budget.month + '-01').toLocaleDateString('en-US', { 
-                            month: 'long', 
-                            year: 'numeric' 
+                          {new Date(budget.month + '-01').toLocaleDateString('en-US', {
+                            month: 'long',
+                            year: 'numeric'
                           })}
                         </p>
                       </div>
@@ -295,23 +295,22 @@ export default function AccountPage(): JSX.Element {
                         </button>
                       </div>
                     </div>
-                    
+
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span>Spent: {formatCurrency(budget.currentSpent)}</span>
                         <span>Limit: {formatCurrency(budget.limitAmount)}</span>
                       </div>
-                      
+
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
-                          className={`h-2 rounded-full transition-all ${
-                            percentage >= 100 ? 'bg-red-500' : 
-                            percentage >= 80 ? 'bg-orange-500' : 'bg-green-500'
-                          }`}
+                          className={`h-2 rounded-full transition-all ${percentage >= 100 ? 'bg-red-500' :
+                              percentage >= 80 ? 'bg-orange-500' : 'bg-green-500'
+                            }`}
                           style={{ width: `${Math.min(percentage, 100)}%` }}
                         ></div>
                       </div>
-                      
+
                       <div className="text-right text-sm text-gray-600">
                         {percentage.toFixed(1)}% used
                       </div>

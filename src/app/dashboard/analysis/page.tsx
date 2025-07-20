@@ -6,7 +6,7 @@ import { AnalysisData, Suggestion, CategoryInsights, SpendingSummary, SpendingTr
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Title, BarElement);
 
-export default function Analysis(): JSX.Element {
+export default function Analysis() {
   const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [categoryInsights, setCategoryInsights] = useState<CategoryInsights | null>(null);
@@ -40,7 +40,7 @@ export default function Analysis(): JSX.Element {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_PYTHON_URL || 'http://localhost:8000'}/api/v1/analysis/comprehensive`,
         {
-          headers: { 
+          headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
@@ -65,7 +65,7 @@ export default function Analysis(): JSX.Element {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_PYTHON_URL || 'http://localhost:8000'}/api/v1/analysis/category/${category}`,
         {
-          headers: { 
+          headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
@@ -89,7 +89,7 @@ export default function Analysis(): JSX.Element {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_PYTHON_URL || 'http://localhost:8000'}/api/v1/analysis/summary`,
         {
-          headers: { 
+          headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
@@ -113,7 +113,7 @@ export default function Analysis(): JSX.Element {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_PYTHON_URL || 'http://localhost:8000'}/api/v1/analysis/trends?days=${days}`,
         {
-          headers: { 
+          headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
@@ -154,7 +154,7 @@ export default function Analysis(): JSX.Element {
     datasets: [{
       data: Object.values(analysisData.category_analysis).map((cat: any) => cat.total_amount),
       backgroundColor: [
-        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
         '#9966FF', '#FF9F40', '#FF6B6B', '#4ECDC4'
       ],
       borderWidth: 1
@@ -202,23 +202,23 @@ export default function Analysis(): JSX.Element {
       {analysisData && (
         <div className="mb-10">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Comprehensive Analysis</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Expenses</h3>
               <p className="text-3xl font-bold text-blue-600">{analysisData.expense_count}</p>
             </div>
-            
+
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Amount</h3>
               <p className="text-3xl font-bold text-green-600">{formatCurrency(analysisData.total_expenses)}</p>
             </div>
-            
+
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-lg font-semibold text-gray-700 mb-2">Analysis Period</h3>
               <p className="text-xl font-bold text-purple-600">{analysisData.period}</p>
             </div>
-            
+
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-lg font-semibold text-gray-700 mb-2">Analysis Date</h3>
               <p className="text-sm font-medium text-gray-600">
@@ -257,8 +257,8 @@ export default function Analysis(): JSX.Element {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Lowest Spending Day</p>
-                  <p className="text-sm font-medium">{analysisData.trends.lowest_spending_day?.date??"no date"}</p>
-                  <p className="text-lg font-semibold">{formatCurrency(analysisData.trends.lowest_spending_day?.amount??0)}</p>
+                  <p className="text-sm font-medium">{analysisData.trends.lowest_spending_day?.date ?? "no date"}</p>
+                  <p className="text-lg font-semibold">{formatCurrency(analysisData.trends.lowest_spending_day?.amount ?? 0)}</p>
                 </div>
               </div>
             </div>
@@ -294,7 +294,7 @@ export default function Analysis(): JSX.Element {
       {spendingSummary && (
         <div className="mb-10">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Spending Summary</h2>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-xl font-semibold text-gray-700 mb-4">Period Comparison</h3>
@@ -342,7 +342,7 @@ export default function Analysis(): JSX.Element {
       {/* Category Insights */}
       <div className="mb-10">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Category Insights</h2>
-        
+
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <h3 className="text-lg font-semibold text-gray-700 mb-4">Select Category for Detailed Analysis</h3>
           <div className="flex flex-wrap gap-2">
@@ -350,11 +350,10 @@ export default function Analysis(): JSX.Element {
               <button
                 key={category}
                 onClick={() => handleCategorySelect(category)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  selectedCategory === category
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${selectedCategory === category
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 {category}
               </button>
@@ -419,7 +418,7 @@ export default function Analysis(): JSX.Element {
       {/* Spending Trends */}
       <div className="mb-10">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Spending Trends</h2>
-        
+
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <h3 className="text-lg font-semibold text-gray-700 mb-4">Select Time Period</h3>
           <div className="flex gap-2">
@@ -427,11 +426,10 @@ export default function Analysis(): JSX.Element {
               <button
                 key={days}
                 onClick={() => handleTrendPeriodChange(days)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  trendPeriod === days
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${trendPeriod === days
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 {days} days
               </button>
